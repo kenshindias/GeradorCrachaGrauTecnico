@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -127,6 +128,66 @@
   .queue-item img { width: 42px; height: 65px; object-fit: cover; border: 1px solid #bbb; }
   .queue-item strong { display: block; font-size: 13px; }
   .queue-item button { padding: 7px 9px; }
+  .filename-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin: 9px 0 2px;
+    padding: 10px 11px;
+    border: 1px solid #d8e2da;
+    border-radius: 8px;
+    background: #f7faf7;
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #435047;
+  }
+  .filename-option input {
+    width: auto;
+    margin: 2px 0 0;
+    accent-color: var(--verde);
+    flex: 0 0 auto;
+  }
+  .toast-container {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 9999;
+    display: grid;
+    gap: 10px;
+    pointer-events: none;
+  }
+  .toast {
+    min-width: 250px;
+    max-width: min(360px, calc(100vw - 36px));
+    padding: 13px 16px;
+    border-radius: 10px;
+    background: #174f24;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(0,0,0,.22);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.35;
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: toast-in .22s ease forwards, toast-out .28s ease 2.45s forwards;
+  }
+  .toast::before {
+    content: "✓";
+    display: inline-grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.18);
+  }
+  @keyframes toast-in {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes toast-out {
+    to { opacity: 0; transform: translateY(-8px); }
+  }
   .status { min-height: 20px; margin-top: 10px; font-size: 13px; font-weight: 700; color: var(--verde-escuro); }
   footer { text-align: center; color: #69726c; padding: 0 16px 24px; font-size: 13px; }
   #printArea { display: none; }
@@ -161,6 +222,7 @@
 </style>
 </head>
 <body>
+<div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 <header>
   <h1>Gerador de Crachás - Grau Técnico</h1>
   <p>Crachás personalizados e modelo fixo de treinamento, no tamanho de 5,5 cm × 8,5 cm.</p>
@@ -172,6 +234,11 @@
 
     <label for="photoInput">Foto da pessoa</label>
     <input id="photoInput" type="file" accept="image/png,image/jpeg,image/webp">
+
+    <label class="filename-option" for="useFilenameInput">
+      <input id="useFilenameInput" type="checkbox">
+      <span>Usar o nome do arquivo da foto como nome do crachá, sempre em CAIXA ALTA.</span>
+    </label>
 
     <label for="nameInput">Nome completo</label>
     <input id="nameInput" type="text" maxlength="70" placeholder="Ex.: MARIA DA SILVA">
@@ -260,6 +327,7 @@
   const ctx = canvas.getContext('2d', { alpha: false });
   const photoInput = document.getElementById('photoInput');
   const nameInput = document.getElementById('nameInput');
+  const useFilenameInput = document.getElementById('useFilenameInput');
   const zoomInput = document.getElementById('zoomInput');
   const xInput = document.getElementById('xInput');
   const yInput = document.getElementById('yInput');
@@ -272,6 +340,7 @@
   const queueCount = document.getElementById('queueCount');
   const printArea = document.getElementById('printArea');
   const trainingThumb = document.getElementById('trainingThumb');
+  const toastContainer = document.getElementById('toastContainer');
 
   const template = new Image();
   let photo = null;
@@ -280,6 +349,32 @@
   function setStatus(message, isError = false) {
     status.textContent = message;
     status.style.color = isError ? '#9a2222' : '#164d20';
+  }
+
+  function showAddedToast(message) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    toastContainer.appendChild(toast);
+    window.setTimeout(() => toast.remove(), 2850);
+  }
+
+  function nameFromPhotoFilename(filename) {
+    return (filename || '')
+      .replace(/\.[^.]+$/, '')
+      .replace(/[_-]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLocaleUpperCase('pt-BR');
+  }
+
+  function applyFilenameAsName() {
+    const file = photoInput.files && photoInput.files[0];
+    if (!useFilenameInput.checked || !file) return;
+    const generatedName = nameFromPhotoFilename(file.name);
+    if (!generatedName) return;
+    nameInput.value = generatedName.slice(0, Number(nameInput.maxLength) || 70);
+    renderBadge();
   }
 
   function roundedRectPath(context, x, y, w, h, r) {
@@ -431,6 +526,7 @@
   photoInput.addEventListener('change', () => {
     const file = photoInput.files && photoInput.files[0];
     if (!file) return;
+    applyFilenameAsName();
     const reader = new FileReader();
     reader.onload = event => {
       const img = new Image();
@@ -452,6 +548,7 @@
   });
 
   nameInput.addEventListener('input', renderBadge);
+  useFilenameInput.addEventListener('change', applyFilenameAsName);
   zoomInput.addEventListener('input', () => { zoomValue.textContent = `${zoomInput.value}%`; renderBadge(); });
   xInput.addEventListener('input', () => { xValue.textContent = xInput.value; renderBadge(); });
   yInput.addEventListener('input', () => { yValue.textContent = yInput.value; renderBadge(); });
@@ -474,7 +571,9 @@
     };
     for (let i = 0; i < quantity; i += 1) queue.push({ ...item });
     updateQueueUI();
-    setStatus(`${quantity} ${quantity === 1 ? 'crachá adicionado' : 'crachás adicionados'} à folha.`);
+    const addedMessage = `${quantity} ${quantity === 1 ? 'crachá adicionado' : 'crachás adicionados'} à folha.`;
+    setStatus(addedMessage);
+    showAddedToast(addedMessage);
   });
 
 
@@ -486,7 +585,9 @@
     };
     for (let i = 0; i < quantity; i += 1) queue.push({ ...item });
     updateQueueUI();
-    setStatus(`${quantity} ${quantity === 1 ? 'crachá de treinamento adicionado' : 'crachás de treinamento adicionados'} à folha.`);
+    const addedMessage = `${quantity} ${quantity === 1 ? 'crachá de treinamento adicionado' : 'crachás de treinamento adicionados'} à folha.`;
+    setStatus(addedMessage);
+    showAddedToast(addedMessage);
   });
 
   document.getElementById('downloadTrainingBtn').addEventListener('click', () => {
