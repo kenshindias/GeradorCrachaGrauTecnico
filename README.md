@@ -13,6 +13,9 @@ O gerador funciona diretamente no navegador, sem instalação, servidor ou conex
 ## Funcionalidades
 
 - Importação da foto do colaborador;
+- Preenchimento opcional do nome a partir do nome do arquivo da foto;
+- Conversão automática do nome para caixa alta;
+- Confirmação visual temporária ao adicionar crachás à folha;
 - Preenchimento do nome completo;
 - Ajuste de zoom e posição da fotografia;
 - Redimensionamento automático do texto para nomes longos;
@@ -90,10 +93,13 @@ Utilize estas configurações na janela de impressão:
 
 ```text
 .
+├── .nojekyll
 ├── Abrir_Gerador.bat
 ├── Gerador_de_Crachas_Grau_Com_Treinamento.html
+├── index.html
 ├── Modelo_Cracha_Personalizado.png
 ├── Modelo_Cracha_Treinamento.png
+├── PUBLICAR_NO_GITHUB.bat
 └── README.md
 ```
 
@@ -114,22 +120,41 @@ As fotos e os nomes utilizados no gerador são processados somente no navegador 
 
 Nenhuma informação é enviada para servidores externos.
 
-## Publicação no GitHub Pages
+## Envio para este repositório
 
-Para disponibilizar o gerador por meio do GitHub Pages:
-
-1. Faça uma cópia do arquivo principal e renomeie para:
+No Windows, execute:
 
 ```text
-index.html
+PUBLICAR_NO_GITHUB.bat
 ```
 
-2. Envie os arquivos para um repositório do GitHub.
-3. No repositório, acesse **Settings → Pages**.
-4. Em **Build and deployment**, escolha a publicação pela branch principal.
-5. Selecione a pasta raiz do repositório e salve.
+O script:
 
-> Ao publicar o projeto, confirme previamente se as imagens, logotipos e elementos visuais podem ser disponibilizados publicamente.
+1. clona `kenshindias/GeradorCrachaGrauTecnico`;
+2. copia os arquivos do projeto;
+3. cria um commit;
+4. realiza o `push` para a branch clonada.
+
+A autenticação ocorre pelo fluxo oficial do GitHub instalado no computador. Não coloque senhas ou tokens dentro do projeto.
+
+## Publicação no GitHub Pages
+
+O arquivo `index.html` já está incluído na raiz do projeto.
+
+Para disponibilizar o gerador pelo GitHub Pages:
+
+1. acesse **Settings → Pages** no repositório;
+2. em **Build and deployment**, selecione a publicação a partir de uma branch;
+3. escolha a branch principal e a pasta `/ (root)`;
+4. salve e aguarde a publicação.
+
+Endereço esperado após a ativação:
+
+```text
+https://kenshindias.github.io/GeradorCrachaGrauTecnico/
+```
+
+> Confirme previamente se as imagens, logotipos e elementos visuais podem ser disponibilizados publicamente.
 
 ## Compatibilidade
 
