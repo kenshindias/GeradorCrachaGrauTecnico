@@ -22,6 +22,7 @@ O gerador funciona diretamente no navegador, sem instalação, servidor ou conex
 - Pré-visualização em tempo real;
 - Download do crachá individual em PNG;
 - Modelo fixo de crachá **Em Treinamento**, sem foto e sem nome;
+- Modelos fixos de crachá **Instrutor T** e **Instrutor P**, sem foto e sem nome;
 - Seleção da quantidade de cópias;
 - Organização automática dos crachás em folha A4;
 - Combinação de crachás personalizados e de treinamento na mesma folha;
@@ -71,6 +72,19 @@ Esse modelo não exige nome nem fotografia.
 
 Também é possível utilizar **Baixar PNG de treinamento** para obter apenas a imagem individual.
 
+
+
+## Adicionando crachás de instrutor
+
+1. Informe a quantidade desejada.
+2. Clique em **Adicionar instrutor T** ou **Adicionar instrutor P**.
+
+Esses modelos não exigem nome nem fotografia.
+
+Também é possível baixar individualmente:
+- **PNG do instrutor T**;
+- **PNG do instrutor P**.
+
 ## Impressão em folha A4
 
 O sistema organiza automaticamente até **9 crachás por página A4**.
@@ -93,13 +107,10 @@ Utilize estas configurações na janela de impressão:
 
 ```text
 .
-├── .nojekyll
 ├── Abrir_Gerador.bat
 ├── Gerador_de_Crachas_Grau_Com_Treinamento.html
-├── index.html
 ├── Modelo_Cracha_Personalizado.png
 ├── Modelo_Cracha_Treinamento.png
-├── PUBLICAR_NO_GITHUB.bat
 └── README.md
 ```
 
@@ -120,41 +131,22 @@ As fotos e os nomes utilizados no gerador são processados somente no navegador 
 
 Nenhuma informação é enviada para servidores externos.
 
-## Envio para este repositório
-
-No Windows, execute:
-
-```text
-PUBLICAR_NO_GITHUB.bat
-```
-
-O script:
-
-1. clona `kenshindias/GeradorCrachaGrauTecnico`;
-2. copia os arquivos do projeto;
-3. cria um commit;
-4. realiza o `push` para a branch clonada.
-
-A autenticação ocorre pelo fluxo oficial do GitHub instalado no computador. Não coloque senhas ou tokens dentro do projeto.
-
 ## Publicação no GitHub Pages
 
-O arquivo `index.html` já está incluído na raiz do projeto.
+Para disponibilizar o gerador por meio do GitHub Pages:
 
-Para disponibilizar o gerador pelo GitHub Pages:
-
-1. acesse **Settings → Pages** no repositório;
-2. em **Build and deployment**, selecione a publicação a partir de uma branch;
-3. escolha a branch principal e a pasta `/ (root)`;
-4. salve e aguarde a publicação.
-
-Endereço esperado após a ativação:
+1. Faça uma cópia do arquivo principal e renomeie para:
 
 ```text
-https://kenshindias.github.io/GeradorCrachaGrauTecnico/
+index.html
 ```
 
-> Confirme previamente se as imagens, logotipos e elementos visuais podem ser disponibilizados publicamente.
+2. Envie os arquivos para um repositório do GitHub.
+3. No repositório, acesse **Settings → Pages**.
+4. Em **Build and deployment**, escolha a publicação pela branch principal.
+5. Selecione a pasta raiz do repositório e salve.
+
+> Ao publicar o projeto, confirme previamente se as imagens, logotipos e elementos visuais podem ser disponibilizados publicamente.
 
 ## Compatibilidade
 
